@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Stock Dashboard | Complete Sales Analytics 2024-2025</title>
+    <title>Executive Stock Dashboard | Equipment Sales Analytics 2024-2025</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -183,6 +183,7 @@
             padding: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             overflow-x: auto;
+            margin-bottom: 25px;
         }
 
         .table-container h3 {
@@ -242,6 +243,20 @@
             display: inline-block;
         }
 
+        .pivot-table {
+            font-size: 11px;
+        }
+
+        .pivot-table td, .pivot-table th {
+            padding: 8px 10px;
+        }
+
+        .equipment-link {
+            cursor: pointer;
+            color: #3498db;
+            text-decoration: underline;
+        }
+
         footer {
             text-align: center;
             margin-top: 30px;
@@ -264,12 +279,12 @@
 <div class="dashboard">
     <div class="header">
         <div class="title">
-            <h1><i class="fas fa-chart-pie"></i> Stock & Sales Intelligence Dashboard</h1>
+            <h1>Stock & Sales Intelligence Dashboard</h1>
             <p>Complete Equipment Sales Analysis | 84 Transactions | FY2024-2025</p>
         </div>
         <div class="filters">
             <div class="filter-group">
-                <label><i class="fas fa-calendar"></i> Year</label>
+                <label>Year</label>
                 <select id="yearFilter">
                     <option value="all">All Years</option>
                     <option value="2024">2024</option>
@@ -277,11 +292,11 @@
                 </select>
             </div>
             <div class="filter-group">
-                <label><i class="fas fa-chart-line"></i> Min Profit (ZAR)</label>
+                <label>Min Profit (ZAR)</label>
                 <input type="number" id="minProfitFilter" placeholder="Min Profit" step="50000">
             </div>
             <div class="filter-group">
-                <label><i class="fas fa-filter"></i> Equipment Category</label>
+                <label>Equipment Category</label>
                 <select id="categoryFilter">
                     <option value="all">All Categories</option>
                     <option value="Dumper">Dumper</option>
@@ -295,7 +310,7 @@
                 </select>
             </div>
             <div class="filter-group">
-                <label><i class="fas fa-chart-simple"></i> Sort By</label>
+                <label>Sort By</label>
                 <select id="sortFilter">
                     <option value="date">Date</option>
                     <option value="profit">Profit (High to Low)</option>
@@ -310,86 +325,129 @@
     <div class="charts-grid">
         <div class="chart-card">
             <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Sales by Buyer (All Buyers)</h3>
-                <i class="fas fa-building"></i>
+                <h3>Profit by Equipment Type (Pivot Summary)</h3>
+                <i class="fas fa-chart-pie"></i>
             </div>
             <div class="scrollable-chart">
-                <canvas id="buyerPieChart"></canvas>
+                <canvas id="equipmentProfitPieChart"></canvas>
             </div>
         </div>
         <div class="chart-card">
             <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Profit by Buyer (All Buyers)</h3>
-                <i class="fas fa-dollar-sign"></i>
+                <h3>Units Sold by Equipment Type</h3>
+                <i class="fas fa-chart-bar"></i>
             </div>
             <div class="scrollable-chart">
-                <canvas id="buyerProfitPieChart"></canvas>
+                <canvas id="unitsSoldBarChart"></canvas>
             </div>
         </div>
         <div class="chart-card">
             <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Sales by Equipment Category</h3>
-                <i class="fas fa-tractor"></i>
-            </div>
-            <canvas id="equipmentPieChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Profit Margin by Category</h3>
-                <i class="fas fa-percent"></i>
-            </div>
-            <canvas id="marginPieChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3><i class="fas fa-chart-line"></i> Monthly Revenue Trend</h3>
-                <i class="fas fa-chart-line"></i>
-            </div>
-            <canvas id="monthlyBarChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Financing Method Analysis</h3>
-                <i class="fas fa-credit-card"></i>
-            </div>
-            <canvas id="financePieChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Top 10 Most Profitable Deals</h3>
+                <h3>Top 10 Most Profitable Equipment Models</h3>
                 <i class="fas fa-trophy"></i>
             </div>
             <div class="scrollable-chart">
-                <canvas id="topProfitPieChart"></canvas>
+                <canvas id="topModelsProfitChart"></canvas>
             </div>
         </div>
         <div class="chart-card">
             <div class="chart-header">
-                <h3><i class="fas fa-chart-pie"></i> Sales by Year Comparison</h3>
-                <i class="fas fa-calendar-alt"></i>
+                <h3>Profit by Buyer (Top 15)</h3>
+                <i class="fas fa-building"></i>
             </div>
-            <canvas id="yearComparisonChart"></canvas>
+            <div class="scrollable-chart">
+                <canvas id="buyerProfitChart"></canvas>
+            </div>
         </div>
     </div>
 
     <div class="table-container">
-        <h3><i class="fas fa-table"></i> Detailed Sales Transactions (All 84 Records)</h3>
+        <h3>Pivot Table: Profit by Equipment Model</h3>
+        <div class="table-wrapper">
+            <table class="pivot-table" id="pivotTable">
+                <thead>
+                    <tr>
+                        <th>Equipment Model</th>
+                        <th>Units Sold</th>
+                        <th>Total Net Profit (ZAR)</th>
+                        <th>Avg Profit per Unit</th>
+                    </tr>
+                </thead>
+                <tbody id="pivotTableBody"></tbody>
+                <tfoot id="pivotTableFooter"></tfoot>
+            </table>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h3>Detailed Sales Transactions (All 84 Records)</h3>
         <div class="table-wrapper">
             <table id="salesTable">
                 <thead>
                     <tr>
-                        <th>Date</th><th>Stock #</th><th>Buyer</th><th>Equipment</th><th>Category</th><th>Selling Price</th><th>Total Cost</th><th>Net Profit</th><th>Margin %</th><th>Finance</th>
+                        <th>Date</th><th>Stock</th><th>Buyer</th><th>Equipment</th><th>Category</th><th>Selling Price</th><th>Total Cost</th><th>Net Profit</th><th>Margin</th><th>Finance</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
     </div>
-    <footer>Data Source: Confirmed Sales 2024-2025 | All figures in ZAR | All buyers displayed individually | 84 total transactions</footer>
+    <footer>Data Source: Confirmed Sales 2024-2025 | All figures in ZAR | Based on pivot table summary</footer>
 </div>
 
 <script>
-    // Complete dataset parsed from your Excel - all 84 verified transactions
+    // Pivot data from your Excel file - organized by equipment model
+    const pivotData = [
+        { model: "BELL B30E 6X6 DUMPER", units: 2, totalProfit: 1186087.5, avgProfit: 593043.75 },
+        { model: "BELL B40E 6X6 DUMPER", units: 7, totalProfit: 4997421.77, avgProfit: 713917.40 },
+        { model: "BELL B45E 6X6 DUMPER", units: 3, totalProfit: 2000618.28, avgProfit: 666872.76 },
+        { model: "BOBCAT S550 SKIDSTEER", units: 1, totalProfit: 30000, avgProfit: 30000 },
+        { model: "CASE 570T 4X4 TLB", units: 1, totalProfit: 109470, avgProfit: 109470 },
+        { model: "CASE 770 EX 4X4 TLB", units: 1, totalProfit: 84712.5, avgProfit: 84712.5 },
+        { model: "CASE 770EX 4X4 TLB", units: 2, totalProfit: 130959.32, avgProfit: 65479.66 },
+        { model: "CASE 851 FX TLB", units: 1, totalProfit: 244965, avgProfit: 244965 },
+        { model: "CASE CX210B EXCAVATOR", units: 2, totalProfit: 373650, avgProfit: 186825 },
+        { model: "CATERILLAR 745 C DUMPER", units: 1, totalProfit: 435964, avgProfit: 435964 },
+        { model: "CATERPILLAR 140 GC GRADER", units: 3, totalProfit: 2316820.85, avgProfit: 772273.62 },
+        { model: "CATERPILLAR 140 H GRADER", units: 1, totalProfit: 252414.36, avgProfit: 252414.36 },
+        { model: "CATERPILLAR 140 K GRADER", units: 1, totalProfit: -45592.87, avgProfit: -45592.87 },
+        { model: "CATERPILLAR 330 EXCAVATOR", units: 1, totalProfit: 684829.92, avgProfit: 684829.92 },
+        { model: "CATERPILLAR 336D2L EXCAVATOR", units: 1, totalProfit: -1104425.37, avgProfit: -1104425.37 },
+        { model: "CATERPILLAR 349D2L EXCAVATOR", units: 1, totalProfit: 848871.12, avgProfit: 848871.12 },
+        { model: "CATERPILLAR 374 D EXCAVATOR", units: 1, totalProfit: 330000, avgProfit: 330000 },
+        { model: "CATERPILLAR 374 EXCAVATOR", units: 1, totalProfit: 561601.67, avgProfit: 561601.67 },
+        { model: "CATERPILLAR 426F2 TLB", units: 4, totalProfit: 785665.21, avgProfit: 196416.30 },
+        { model: "CATERPILLAR 730 DUMPER", units: 1, totalProfit: 70000, avgProfit: 70000 },
+        { model: "CATERPILLAR 740 B DUMPER", units: 3, totalProfit: 277346, avgProfit: 92448.67 },
+        { model: "CATERPILLAR 740 GC DUMPER", units: 1, totalProfit: 80000, avgProfit: 80000 },
+        { model: "CATERPILLAR 745 C DUMPER", units: 4, totalProfit: 1840854.14, avgProfit: 460213.54 },
+        { model: "CATERPILLAR 745 DUMPER", units: 2, totalProfit: 728368.53, avgProfit: 364184.27 },
+        { model: "CATERPILLAR 773 F DUMP TRUCK", units: 3, totalProfit: 849771.49, avgProfit: 283257.16 },
+        { model: "CATERPILLAR 777 D RIGID TRUCK", units: 1, totalProfit: 253043.48, avgProfit: 253043.48 },
+        { model: "CATERPILLAR 966 L LOADER", units: 3, totalProfit: 38468.16, avgProfit: 12822.72 },
+        { model: "CATERPILLAR D8GC DOZER", units: 1, totalProfit: 401690, avgProfit: 401690 },
+        { model: "CATERPILLAR D8T DOZER", units: 1, totalProfit: 662757.94, avgProfit: 662757.94 },
+        { model: "CATERPILLAR D9R DOZER", units: 1, totalProfit: 1146310.94, avgProfit: 1146310.94 },
+        { model: "DYNAPAC CA510D 18T ROLLER", units: 1, totalProfit: 187950, avgProfit: 187950 },
+        { model: "FOTON FL966F-II LOADER", units: 1, totalProfit: 117000, avgProfit: 117000 },
+        { model: "HINO 500 COMBINATION TRUCK", units: 1, totalProfit: 944310, avgProfit: 944310 },
+        { model: "HITACHI ZX870LCR-5B EXCAVATOR", units: 1, totalProfit: 65525, avgProfit: 65525 },
+        { model: "JCB 3CX SITEMASTER TLB", units: 1, totalProfit: 54935.59, avgProfit: 54935.59 },
+        { model: "KOMATSU HM400-3R DUMPER", units: 4, totalProfit: 467655.94, avgProfit: 116913.99 },
+        { model: "KOMATSU PC300-7 EXCAVATOR", units: 1, totalProfit: 181539.58, avgProfit: 181539.58 },
+        { model: "KOMATSU WA500-6R LOADER", units: 1, totalProfit: 350000, avgProfit: 350000 },
+        { model: "LOVOL FL966F-II LOADER", units: 1, totalProfit: 90955.87, avgProfit: 90955.87 },
+        { model: "LOVOL FL978H LOADER", units: 2, totalProfit: 638565.98, avgProfit: 319282.99 },
+        { model: "MERC BENZ 2628 AXOR BITUMENT TANKER", units: 1, totalProfit: -5660.09, avgProfit: -5660.09 },
+        { model: "POWERSTAR 2628 18000L WATERTRUCK", units: 1, totalProfit: 134603.63, avgProfit: 134603.63 },
+        { model: "POWERSTAR 3035 VX TIPPER TRUCK", units: 1, totalProfit: 82834.96, avgProfit: 82834.96 },
+        { model: "POWERSTAR 4035 8X4 TIPPER TRUCK", units: 1, totalProfit: 370324.35, avgProfit: 370324.35 },
+        { model: "POWERSTAR 4035 VX TIPPER TRUCK", units: 2, totalProfit: 774478.82, avgProfit: 387239.41 },
+        { model: "SEM 510 PADFOOT ROLLER", units: 1, totalProfit: 288591.05, avgProfit: 288591.05 },
+        { model: "VOLVO A40G 6X6 DUMPER", units: 7, totalProfit: 1997062.7, avgProfit: 285294.67 }
+    ];
+
+    // Full transaction data
     const salesData = [
         { date:"2024-08-14", stock:"#NEM1083", buyer:"AFRICA MACHINE SERVICES", equipment:"KOMATSU HM400-3R DUMPER", category:"Dumper", sellPrice:1180000, totalCost:1024825, profit:155175, margin:13.15, finance:"WH" },
         { date:"2024-08-14", stock:"#NEM1084", buyer:"AFRICA MACHINE SERVICES", equipment:"KOMATSU HM400-3R DUMPER", category:"Dumper", sellPrice:1300000, totalCost:1021229, profit:278771, margin:21.44, finance:"WH" },
@@ -502,7 +560,6 @@
             return true;
         });
         
-        // Apply sorting
         if (sortVal === 'profit') {
             filteredData.sort((a,b) => b.profit - a.profit);
         } else if (sortVal === 'revenue') {
@@ -516,14 +573,11 @@
 
     function updateDashboard() {
         updateKPIs();
-        updateBuyerPie();
-        updateBuyerProfitPie();
-        updateEquipmentPie();
-        updateMarginPie();
-        updateMonthlyChart();
-        updateFinancePie();
-        updateTopProfitPie();
-        updateYearComparison();
+        updateEquipmentProfitPieChart();
+        updateUnitsSoldBarChart();
+        updateTopModelsProfitChart();
+        updateBuyerProfitChart();
+        updatePivotTable();
         updateTable();
     }
 
@@ -544,139 +598,94 @@
         `;
     }
 
-    function updateBuyerPie() {
-        const buyerMap = new Map();
-        filteredData.forEach(s => {
-            buyerMap.set(s.buyer, (buyerMap.get(s.buyer) || 0) + s.sellPrice);
+    function updateEquipmentProfitPieChart() {
+        const profitByModel = {};
+        pivotData.forEach(item => {
+            profitByModel[item.model] = item.totalProfit;
         });
         
-        const buyers = [...buyerMap.keys()];
-        const values = buyers.map(b => buyerMap.get(b));
-        const colors = generateColors(buyers.length);
+        const models = Object.keys(profitByModel);
+        const profits = models.map(m => profitByModel[m]);
+        const colors = generateColors(models.length);
         
-        if (window.buyerChart) window.buyerChart.destroy();
+        if (window.equipmentProfitChart) window.equipmentProfitChart.destroy();
         
-        window.buyerChart = new Chart(document.getElementById('buyerPieChart'), { 
+        window.equipmentProfitChart = new Chart(document.getElementById('equipmentProfitPieChart'), { 
             type: 'pie', 
-            data: { labels: buyers, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1, borderColor: 'white' }] }, 
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { font: { size: 9 }, boxWidth: 8 } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)} (${((ctx.raw/filteredData.reduce((s,d)=>s+d.sellPrice,0))*100).toFixed(1)}%)` } } } } 
+            data: { labels: models, datasets: [{ data: profits, backgroundColor: colors, borderWidth: 1, borderColor: 'white' }] }, 
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { font: { size: 8 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } } } } 
         });
     }
 
-    function updateBuyerProfitPie() {
-        const profitMap = new Map();
-        filteredData.forEach(s => {
-            profitMap.set(s.buyer, (profitMap.get(s.buyer) || 0) + s.profit);
+    function updateUnitsSoldBarChart() {
+        const unitsByModel = {};
+        pivotData.forEach(item => {
+            unitsByModel[item.model] = item.units;
         });
         
-        const buyers = [...profitMap.keys()];
-        const values = buyers.map(b => profitMap.get(b));
-        const colors = generateColors(buyers.length);
+        const models = Object.keys(unitsByModel).slice(0, 20);
+        const units = models.map(m => unitsByModel[m]);
+        
+        if (window.unitsChart) window.unitsChart.destroy();
+        
+        window.unitsChart = new Chart(document.getElementById('unitsSoldBarChart'), { 
+            type: 'bar', 
+            data: { labels: models, datasets: [{ label: 'Units Sold', data: units, backgroundColor: '#3498db', borderRadius: 8 }] }, 
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => `${ctx.raw} units` } } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } } 
+        });
+    }
+
+    function updateTopModelsProfitChart() {
+        const topModels = [...pivotData].sort((a,b) => b.totalProfit - a.totalProfit).slice(0, 10);
+        
+        if (window.topModelsChart) window.topModelsChart.destroy();
+        
+        window.topModelsChart = new Chart(document.getElementById('topModelsProfitChart'), { 
+            type: 'bar', 
+            data: { labels: topModels.map(m => m.model.length > 30 ? m.model.substring(0, 27) + '...' : m.model), datasets: [{ label: 'Total Profit (ZAR)', data: topModels.map(m => m.totalProfit), backgroundColor: '#2ecc71', borderRadius: 8 }] }, 
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => formatCurrency(ctx.raw) } } }, scales: { y: { ticks: { callback: (val) => formatCurrency(val) } } } } 
+        });
+    }
+
+    function updateBuyerProfitChart() {
+        const buyerProfitMap = new Map();
+        filteredData.forEach(s => {
+            buyerProfitMap.set(s.buyer, (buyerProfitMap.get(s.buyer) || 0) + s.profit);
+        });
+        
+        const topBuyers = [...buyerProfitMap.entries()].sort((a,b) => b[1] - a[1]).slice(0, 15);
         
         if (window.buyerProfitChart) window.buyerProfitChart.destroy();
         
-        window.buyerProfitChart = new Chart(document.getElementById('buyerProfitPieChart'), { 
-            type: 'doughnut', 
-            data: { labels: buyers, datasets: [{ data: values, backgroundColor: colors, borderWidth: 1, borderColor: 'white' }] }, 
-            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { font: { size: 9 }, boxWidth: 8 } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } } } } 
-        });
-    }
-
-    function updateEquipmentPie() {
-        const equipMap = new Map();
-        filteredData.forEach(s => {
-            equipMap.set(s.category, (equipMap.get(s.category) || 0) + s.sellPrice);
-        });
-        
-        if (window.equipChart) window.equipChart.destroy();
-        
-        window.equipChart = new Chart(document.getElementById('equipmentPieChart'), { 
+        window.buyerProfitChart = new Chart(document.getElementById('buyerProfitChart'), { 
             type: 'pie', 
-            data: { labels: [...equipMap.keys()], datasets: [{ data: [...equipMap.values()], backgroundColor: ['#3498db','#e74c3c','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#34495e'] }] }, 
-            options: { responsive: true, plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)} (${((ctx.raw/filteredData.reduce((s,d)=>s+d.sellPrice,0))*100).toFixed(1)}%)` } } } } 
+            data: { labels: topBuyers.map(b => b[0].length > 30 ? b[0].substring(0, 27) + '...' : b[0]), datasets: [{ data: topBuyers.map(b => b[1]), backgroundColor: generateColors(topBuyers.length) }] }, 
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'right', labels: { font: { size: 9 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } } } } 
         });
     }
 
-    function updateMarginPie() {
-        const marginMap = new Map();
-        filteredData.forEach(s => {
-            if (!marginMap.has(s.category)) marginMap.set(s.category, { revenue: 0, profit: 0 });
-            const cat = marginMap.get(s.category);
-            cat.revenue += s.sellPrice;
-            cat.profit += s.profit;
+    function updatePivotTable() {
+        const tbody = document.getElementById('pivotTableBody');
+        const footer = document.getElementById('pivotTableFooter');
+        tbody.innerHTML = '';
+        
+        const sortedData = [...pivotData].sort((a,b) => b.totalProfit - a.totalProfit);
+        let totalUnits = 0;
+        let totalProfit = 0;
+        
+        sortedData.forEach(item => {
+            const row = `<tr>
+                <td><strong>${item.model}</strong></td>
+                <td class="badge">${item.units}</td>
+                <td class="${item.totalProfit > 0 ? 'profit-positive' : 'profit-negative'}">${formatCurrency(item.totalProfit)}</td>
+                <td>${formatCurrency(item.avgProfit)}</td>
+            </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+            totalUnits += item.units;
+            totalProfit += item.totalProfit;
         });
         
-        const categories = [...marginMap.keys()];
-        const margins = categories.map(cat => (marginMap.get(cat).profit / marginMap.get(cat).revenue * 100));
-        
-        if (window.marginChart) window.marginChart.destroy();
-        
-        window.marginChart = new Chart(document.getElementById('marginPieChart'), { 
-            type: 'pie', 
-            data: { labels: categories, datasets: [{ data: margins, backgroundColor: ['#2ecc71','#3498db','#f39c12','#e74c3c','#9b59b6','#1abc9c','#e67e22','#34495e'] }] }, 
-            options: { responsive: true, plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw.toFixed(1)}% margin` } } } } 
-        });
-    }
-
-    function updateMonthlyChart() {
-        const monthlyMap = new Map();
-        const monthOrder = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        filteredData.forEach(s => {
-            const month = monthOrder[new Date(s.date).getMonth()];
-            monthlyMap.set(month, (monthlyMap.get(month) || 0) + s.sellPrice);
-        });
-        const sortedMonths = monthOrder.filter(m => monthlyMap.has(m));
-        const values = sortedMonths.map(m => monthlyMap.get(m));
-        
-        if (window.monthlyChart) window.monthlyChart.destroy();
-        
-        window.monthlyChart = new Chart(document.getElementById('monthlyBarChart'), { 
-            type: 'bar', 
-            data: { labels: sortedMonths, datasets: [{ label: 'Revenue (ZAR)', data: values, backgroundColor: '#3498db', borderRadius: 8 }] }, 
-            options: { responsive: true, plugins: { tooltip: { callbacks: { label: (ctx) => formatCurrency(ctx.raw) } } }, scales: { y: { ticks: { callback: (val) => formatCurrency(val) } } } } 
-        });
-    }
-
-    function updateFinancePie() {
-        const financeMap = new Map();
-        filteredData.forEach(s => {
-            financeMap.set(s.finance, (financeMap.get(s.finance) || 0) + s.sellPrice);
-        });
-        
-        if (window.financeChart) window.financeChart.destroy();
-        
-        window.financeChart = new Chart(document.getElementById('financePieChart'), { 
-            type: 'pie', 
-            data: { labels: [...financeMap.keys()], datasets: [{ data: [...financeMap.values()], backgroundColor: ['#3498db','#e74c3c','#2ecc71','#f39c12'] }] }, 
-            options: { responsive: true, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } } } } 
-        });
-    }
-
-    function updateTopProfitPie() {
-        const topProfits = [...filteredData].sort((a,b) => b.profit - a.profit).slice(0, 10);
-        
-        if (window.topProfitChart) window.topProfitChart.destroy();
-        
-        window.topProfitChart = new Chart(document.getElementById('topProfitPieChart'), { 
-            type: 'pie', 
-            data: { labels: topProfits.map(s => `${s.buyer.substring(0, 25)}...`), datasets: [{ data: topProfits.map(s => s.profit), backgroundColor: generateColors(10) }] }, 
-            options: { responsive: true, plugins: { legend: { position: 'right', labels: { font: { size: 8 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${formatCurrency(ctx.raw)}` } } } } 
-        });
-    }
-
-    function updateYearComparison() {
-        const revenue2024 = filteredData.filter(s => s.date.startsWith('2024')).reduce((sum, s) => sum + s.sellPrice, 0);
-        const revenue2025 = filteredData.filter(s => s.date.startsWith('2025')).reduce((sum, s) => sum + s.sellPrice, 0);
-        const profit2024 = filteredData.filter(s => s.date.startsWith('2024')).reduce((sum, s) => sum + s.profit, 0);
-        const profit2025 = filteredData.filter(s => s.date.startsWith('2025')).reduce((sum, s) => sum + s.profit, 0);
-        
-        if (window.yearChart) window.yearChart.destroy();
-        
-        window.yearChart = new Chart(document.getElementById('yearComparisonChart'), { 
-            type: 'bar', 
-            data: { labels: ['2024', '2025'], datasets: [{ label: 'Revenue (ZAR)', data: [revenue2024, revenue2025], backgroundColor: '#3498db', borderRadius: 8 }, { label: 'Profit (ZAR)', data: [profit2024, profit2025], backgroundColor: '#2ecc71', borderRadius: 8 }] }, 
-            options: { responsive: true, plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` } } }, scales: { y: { ticks: { callback: (val) => formatCurrency(val) } } } } 
-        });
+        footer.innerHTML = `<tr style="background: #f8f9fa; font-weight: 600;"><td>TOTAL</td><td>${totalUnits}</td><td>${formatCurrency(totalProfit)}</td><td>${formatCurrency(totalProfit/totalUnits)}</td></tr>`;
     }
 
     function updateTable() {
@@ -703,13 +712,11 @@
         return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
     }
 
-    // Event listeners
     document.getElementById('yearFilter').addEventListener('change', filterData);
     document.getElementById('minProfitFilter').addEventListener('input', filterData);
     document.getElementById('categoryFilter').addEventListener('change', filterData);
     document.getElementById('sortFilter').addEventListener('change', filterData);
     
-    // Initialize
     filterData();
 </script>
 </body>
